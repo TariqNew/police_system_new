@@ -1,0 +1,193 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+.body-home, .body-login {
+	background: url(../img/police.png);
+	background-size: cover;
+	background-attachment: fixed;
+	background-position: center;
+}
+.black-fill {
+	background: rgba(0,0,0, 0.5);
+	min-height: 100vh;
+}
+#homeNav {
+	background: rgba(255,255,255, 0.749) !important;
+	font-weight: 550;
+	border-radius: 5px;
+}
+.container-fluid{
+	
+}
+.navbar-brand{
+	color:#0a319b;
+	font-weight: 600;
+	font-size: 25px;
+}
+.welcome-text {
+	min-height: 80vh;
+}
+.welcome-text img {
+	width: 100px;
+}
+.welcome-text h4 {
+	color: #eee;
+	font-size: 58px;
+	font-weight: 650;
+
+}
+.welcome-text p {
+	color: #222;
+	background: rgba(255,255,255, 0.749);
+	padding: 5px;
+	border-radius: 4px;
+}
+#about {
+	min-height: 100vh;
+}
+#about .card-1{
+	max-width: 600px;
+	width: 90%;
+	background: rgba(255, 255, 255, 0.749);
+	padding: 20px;
+	border-radius: 5px;
+}
+#about .card-1 h5{
+	font-size: 28px;
+	font-weight: bold;
+}
+
+#contact {
+	min-height: 100vh;
+}
+#contact form{
+	max-width: 600px;
+	width: 90%;
+	background: rgba(255,255,255, 0.749);
+	padding: 20px;
+	border-radius: 5px;
+	font-weight: bold;
+}
+#contact form h3 {
+	text-align: center;
+	font-weight: bold;
+}
+textarea {
+	resize: none;
+}
+
+.login {
+	max-width: 500px;
+	width: 90%;
+	background: rgba(255, 255, 255, 0.749);
+	padding: 10px;
+	border-radius: 10px;
+}
+.login h3{
+	text-align: center;
+	font-size: 50px;
+	font-weight: bold;
+}
+.w-450 {
+	width: 450px;
+}
+.n-table {
+	max-width: 800px;
+}
+.form-w {
+	max-width: 600px;
+	width: 100%;
+}
+.img-div{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 80px;
+	height: 60px;
+	position: relative;
+	left: 120px;
+	margin: 30px 0;
+}
+.img-div img{
+	object-fit: cover;
+	width: 100%;
+	height: 100%;
+	border-radius: 10px;
+}
+
+/* fingerprint */
+
+scan{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.scan .fingerprint{
+    position: relative;
+    width: 300px;
+    height: 380px;
+    background: url(img/fingerPrint_01.png);
+    background-size: 300px;
+}
+
+.scan .fingerprint::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(../img/fingerPrint_02.png);
+    background-size: 300px;
+    animation: animate 4s ease-in-out infinite;
+}
+
+@keyframes animate {
+    0%,100%{
+        height: 0%;
+    }
+    50%{
+        height: 100%;
+    }
+}
+
+.scan .fingerprint::after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: #3fefef;
+    border-radius: 8px;
+    filter: drop-shadow(0 0 20px #3fefef) drop-shadow(0 0 60px #3fefef);
+    animation: animate_line 4s ease-in-out infinite;
+}
+
+@keyframes animate_line {
+    0%,100%{
+        top: 0%;
+    }
+    50%{
+        top: 100%;
+    }
+}
+
+.scan h3{
+    text-transform: uppercase;
+    font-size:  2em;
+    letter-spacing: 2px;
+    margin-top: 20px;
+    color: #3fefef;
+    filter: drop-shadow(0 0 20px #3fefef) drop-shadow(0 0 60px #3fefef);
+    animation: animate_text 0.5s steps(1) infinite;
+}
+
+@keyframes animate_text {
+    0%,100%{
+        opacity: 0;
+    }
+    50%{
+        opacity: 1;
+    }
+}
