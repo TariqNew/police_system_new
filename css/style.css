@@ -1,12 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
-.body-home, .body-login {
+.body-home{
 	background: url(../img/police.png);
 	background-size: cover;
 	background-attachment: fixed;
 	background-position: center;
 }
+.body-login{
+	margin-top: 30px;
+	background-color: #fff;
+}
 .black-fill {
-	background: rgba(0,0,0, 0.5);
 	min-height: 100vh;
 }
 #homeNav {
@@ -14,9 +17,7 @@
 	font-weight: 550;
 	border-radius: 5px;
 }
-.container-fluid{
-	
-}
+
 .navbar-brand{
 	color:#0a319b;
 	font-weight: 600;
@@ -80,6 +81,7 @@ textarea {
 	background: rgba(255, 255, 255, 0.749);
 	padding: 10px;
 	border-radius: 10px;
+	border: 1px solid #d3d0d0;
 }
 .login h3{
 	text-align: center;

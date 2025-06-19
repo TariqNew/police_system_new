@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once './data/log.php';
+require_once '../req/logger.php';
 require_once "../DB_connection.php";
 
 // Escape output for HTML
@@ -102,13 +103,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $email,
       $gender,
       $dob
-    ]);
+    ]); 
 
+    $user_id = $_SESSION['admin_id'] ?? 0;
+    $role = $_SESSION['role'] ?? 'Unknown';
+    $action = 'ADD POLICE OFFICER';
+    $description = "Added new police officer: username='$username', employee_number='$employee_number'";
+
+    logAction($conn, $user_id, $role, $action, $description);
 
     $logger->log('info', "New officer registered: $username");
 
     $_SESSION['success'] = "Officer added successfully.";
-    header("Location: " . $_SERVER['PHP_SELF']);
+    header("Location: police_officer.php");
     exit;
 
   } catch (Exception $e) {
@@ -169,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-md-6 mb-3">
               <label class="form-label">Password</label>
               <div class="input-group">
-                <input type="password" name="pass" id="passInput" class="form-control" required />
+                <input type="text" name="pass" id="passInput" class="form-control" required />
                 <button class="btn btn-secondary" id="gBtn">Random</button>
               </div>
             </div>
@@ -213,6 +220,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <input type="date" name="date_of_birth" class="form-control"
                 value="<?= esc($old['date_of_birth'] ?? '') ?>" required />
             </div>
+            <div class="col-md-6 mb-3 d-flex justify-content-center">
+              <a href="../req/fingerprint.php" class="text-decoration-none text-center">
+                <div class="border rounded p-3 shadow-sm" style="width: 160px; cursor: pointer;">
+                  <img src="../img/fingerPrint_01.png" alt="Fingerprint Icon" style="width: 80px; height: 90px;">
+                  <div class="mt-2 text-dark" style="font-size: 14px;">Add a fingerprint</div>
+                </div>
+              </a>
+            </div>
+
           </div>
 
           <button type="submit" class="btn btn-primary mt-3">Add Officer</button>

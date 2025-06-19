@@ -30,7 +30,6 @@ if (isset($_SESSION['admin_id']) && $_SESSION['role'] == 'Admin') {
     <title>CRMS Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="icon" href="../ifm-logo.jpg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
       .criminal-record {
@@ -77,7 +76,7 @@ if (isset($_SESSION['admin_id']) && $_SESSION['role'] == 'Admin') {
           <!-- Statistics Cards -->
           <div class="row g-3 mb-4">
             <div class="col-md-4">
-              <div class="card criminal-record text-white status-open">
+              <div class="card criminal-record text-white text-bg-primary">
                 <div class="card-body">
                   <h5 class="card-title">Total Officers</h5>
                   <h2 class="display-4 mb-0"><?= $totalOfficers ?></h2>
@@ -86,7 +85,7 @@ if (isset($_SESSION['admin_id']) && $_SESSION['role'] == 'Admin') {
               </div>
             </div>
             <div class="col-md-4">
-              <div class="card criminal-record text-white status-investigating">
+              <div class="card criminal-record text-white text-bg-success">
                 <div class="card-body">
                   <h5 class="card-title">Total Investigators</h5>
                   <h2 class="display-4 mb-0"><?= $totalInvestigators ?></h2>
@@ -95,7 +94,7 @@ if (isset($_SESSION['admin_id']) && $_SESSION['role'] == 'Admin') {
               </div>
             </div>
             <div class="col-md-4">
-              <div class="card criminal-record text-white status-run">
+              <div class="card criminal-record text-white text-bg-warning">
                 <div class="card-body">
                   <h5 class="card-title">Total Criminals</h5>
                   <h2 class="display-4 mb-0"><?= $totalSuspects ?></h2>

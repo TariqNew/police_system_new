@@ -16,9 +16,9 @@
 			<form class="login" method="post" action="req/login.php">
 
 				<div class="text-center">
-					<img src="" width="100">
+					<img src="img/police.png" width="100">
 				</div>
-				<h3>LOGIN</h3>
+				<h5 class="text-center mx-4">CRMS | LOGIN</h5>
 				<?php if (isset($_GET['error'])) { ?>
 					<div class="alert alert-danger" role="alert">
 						<?= $_GET['error'] ?>
@@ -46,21 +46,14 @@
 				<button type="submit" class="btn btn-primary">Login</button>
 				<a href="index.php" class="text-decoration-none">Home</a>
 			</form>
-			<div class="fingeprint-section text-center text-white fs-5">
+			<div class="fingeprint-section text-center fs-5 mt-3" style="color: blue">
 				<hr>
-				<span>OR</span>
-				<div>use the fingerprint authentication</div>
-				<div class="img-div">
-					<a href="req/fingerprint.php">
-						<img src="img/fingerprint.jpg" alt="">
-					</a>
-				</div>
+				<a href="req/fingerprint.php">use the fingerprint authentication</a>
 			</div>
 			<br /><br />
-			<div class="text-center text-light">
+			<div class="text-center mt-5">
 				Copyright &copy; 2024 . All rights reserved.
 			</div>
-
 		</div>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>

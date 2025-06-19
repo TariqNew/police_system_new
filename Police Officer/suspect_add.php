@@ -45,7 +45,8 @@ if (isset($_SESSION['officer_id']) && isset($_SESSION['role']) && $_SESSION['rol
       <div class="row" style="padding-top: 56px;">
         <?php include "./inc/sidebar.php"; ?>
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-3" style="height: calc(100vh - 56px); overflow-y: auto;">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-3"
+          style="height: calc(100vh - 56px); overflow-y: auto;">
           <a href="suspect.php" class="btn btn-dark mb-4">Go Back</a>
 
           <form method="post" class="shadow p-4 bg-light" action="req/suspect_add.php">
@@ -142,6 +143,15 @@ if (isset($_SESSION['officer_id']) && isset($_SESSION['role']) && $_SESSION['rol
             <div class="mb-3">
               <label class="form-label">Case Date</label>
               <input type="date" class="form-control" name="case_date" value="<?= htmlspecialchars($case_date) ?>" />
+            </div>
+
+            <div class="col-md-12 d-flex justify-content-center mb-3">
+              <a href="../req/fingerprint.php" class="text-decoration-none text-center">
+                <div class="border rounded p-3 shadow-sm bg-light" style="width: 160px; cursor: pointer;">
+                  <img src="../img/fingerPrint_01.png" alt="Fingerprint Icon" style="width: 80px; height: 90px;">
+                  <div class="mt-2 text-dark" style="font-size: 14px;">Add a fingerprint</div>
+                </div>
+              </a>
             </div>
 
             <button type="submit" class="btn btn-primary">Register Suspect & Case</button>

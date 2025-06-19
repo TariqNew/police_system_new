@@ -95,8 +95,8 @@ if (
         $conn,
         $_SESSION['admin_id'],
         $_SESSION['role'],
-        "VIEW POLICE OFFICER EDIT PAGE",
-        "Viewed edit form for officer_id=$officer_id"
+        "POLICE OFFICER EDIT",
+        "edit form for officer_id=$officer_id"
     );
 } else {
     header("Location: police_officer.php?error=Unauthorized access");
