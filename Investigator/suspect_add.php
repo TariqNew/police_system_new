@@ -11,7 +11,6 @@ if (
 
     include "../DB_connection.php";
 
-    // Preserve form values on error
     $fname = $_GET['fname'] ?? '';
     $lname = $_GET['lname'] ?? '';
     $uname = $_GET['uname'] ?? '';
@@ -20,7 +19,6 @@ if (
     $pfn = $_GET['pfn'] ?? '';
     $pln = $_GET['pln'] ?? '';
     $ppn = $_GET['ppn'] ?? '';
-
     $case_title = $_GET['case_title'] ?? '';
     $case_description = $_GET['case_description'] ?? '';
     $case_date = $_GET['case_date'] ?? '';
@@ -34,15 +32,44 @@ if (
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="../css/style.css" />
   <link rel="icon" href="../logo.png" />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <style>
+    body {
+      overflow-x: hidden;
+    }
+    .sidebar {
+      position: fixed;
+      top: 56px; /* height of navbar */
+      bottom: 0;
+      left: 0;
+      width: 250px;
+      overflow-y: auto;
+      background-color: #f8f9fa;
+      border-right: 1px solid #dee2e6;
+      padding-top: 1rem;
+    }
+    main {
+      margin-left: 250px;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        position: static;
+        width: 100%;
+      }
+      main {
+        margin-left: 0;
+      }
+    }
+  </style>
 </head>
 <body>
 
 <?php include "./inc/navbar.php"; ?>
 
 <div class="container-fluid">
-  <div class="row" style="padding-top: 56px;">
-    <?php include "./inc/sidebar.php"; ?>
+  <div class="row vh-100">
+    <div class="col-md-3 col-lg-2 sidebar">
+      <?php include "./inc/sidebar.php"; ?>
+    </div>
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-3">
       <a href="suspect.php" class="btn btn-dark mb-4">Go Back</a>
@@ -154,8 +181,7 @@ if (
 
   function makePass(length) {
     let result = "";
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * characters.length));
     }

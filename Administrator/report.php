@@ -6,6 +6,9 @@ error_reporting(E_ALL);
 session_start();
 include '../DB_connection.php';
 
+// Include FPDF library (make sure this path is correct)
+require_once '../fpdf/fpdf.php';
+
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
     header('Location: ../dashboard.php');
     exit;
@@ -14,7 +17,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Admin') {
 $start_date = $_GET['start_date'] ?? null;
 $end_date = $_GET['end_date'] ?? null;
 
-function dateCondition($field, $start, $end) {
+function dateCondition($field, $start, $end)
+{
     if ($start && $end) {
         return " AND $field BETWEEN :start_date AND :end_date ";
     }
@@ -99,25 +103,42 @@ if ($start_date && $end_date) {
 $investigations_stmt->execute();
 $investigations_list = $investigations_stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Handle CSV export requests
+// Handle PDF export requests
 if (isset($_GET['export'])) {
     $exportType = $_GET['export'];
 
-    // Common function to output CSV
-    function outputCSV($filename, $header, $rows) {
-        header('Content-Type: text/csv');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        $output = fopen('php://output', 'w');
-        fputcsv($output, $header);
-        foreach ($rows as $row) {
-            fputcsv($output, $row);
+    class PDF extends FPDF
+    {
+        // Page header
+        function Header()
+        {
+            $this->SetFont('Arial', 'B', 14);
+            $this->Cell(0, 10, 'CRMS Report', 0, 1, 'C');
+            $this->Ln(5);
         }
-        fclose($output);
-        exit;
+        // Page footer
+        function Footer()
+        {
+            $this->SetY(-15);
+            $this->SetFont('Arial', 'I', 8);
+            $this->Cell(0, 10, 'Page ' . $this->PageNo(), 0, 0, 'C');
+        }
     }
 
+    $pdf = new PDF();
+    $pdf->AddPage();
+    $pdf->SetFont('Arial', '', 12);
+
     if ($exportType === 'summary') {
-        $header = ['Metric', 'Value'];
+        $pdf->Cell(0, 10, 'Summary Report', 0, 1, 'C');
+        $pdf->Ln(5);
+
+        $pdf->SetFont('Arial', 'B', 12);
+        $pdf->Cell(80, 10, 'Metric', 1);
+        $pdf->Cell(80, 10, 'Value', 1);
+        $pdf->Ln();
+
+        $pdf->SetFont('Arial', '', 12);
         $rows = [
             ['Total Criminals', $total_suspects],
             ['Total Cases', $total_cases],
@@ -125,35 +146,70 @@ if (isset($_GET['export'])) {
             ['Total Investigations', $total_investigations],
             ['Crime Trend', $crime_trend],
         ];
-        outputCSV('crms_summary_report.csv', $header, $rows);
+        foreach ($rows as $row) {
+            $pdf->Cell(80, 10, $row[0], 1);
+            $pdf->Cell(80, 10, $row[1], 1);
+            $pdf->Ln();
+        }
+
+        $pdf->Output('D', 'crms_summary_report.pdf');
+        exit;
+
     } elseif ($exportType === 'cases') {
-        $header = ['Case ID', 'Case Title', 'Description', 'Date Reported', 'Suspect First Name', 'Suspect Last Name'];
-        $rows = [];
+        $pdf->Cell(0, 10, 'Criminal Cases Report', 0, 1, 'C');
+        $pdf->Ln(5);
+
+        // Table header
+        $pdf->SetFont('Arial', 'B', 10);
+        $header = ['Case ID', 'Title', 'Description', 'Date Reported', 'Suspect First Name', 'Suspect Last Name'];
+        $widths = [15, 40, 60, 25, 30, 30];
+        foreach ($header as $i => $col) {
+            $pdf->Cell($widths[$i], 10, $col, 1);
+        }
+        $pdf->Ln();
+
+        // Table data
+        $pdf->SetFont('Arial', '', 9);
         foreach ($cases_list as $case) {
-            $rows[] = [
-                $case['case_id'],
-                $case['case_title'],
-                $case['case_description'],
-                $case['date_reported'],
-                $case['suspect_fname'],
-                $case['suspect_lname'],
-            ];
+            $pdf->Cell($widths[0], 8, $case['case_id'], 1);
+            $pdf->Cell($widths[1], 8, substr($case['case_title'], 0, 30), 1);
+            $pdf->Cell($widths[2], 8, substr($case['case_description'], 0, 40), 1);
+            $pdf->Cell($widths[3], 8, $case['date_reported'], 1);
+            $pdf->Cell($widths[4], 8, $case['suspect_fname'], 1);
+            $pdf->Cell($widths[5], 8, $case['suspect_lname'], 1);
+            $pdf->Ln();
         }
-        outputCSV('crms_cases_report.csv', $header, $rows);
+
+        $pdf->Output('D', 'crms_cases_report.pdf');
+        exit;
+
     } elseif ($exportType === 'investigations') {
-        $header = ['Investigation ID', 'Case Title', 'Description', 'Status', 'Date Started', 'Date Closed'];
-        $rows = [];
-        foreach ($investigations_list as $inv) {
-            $rows[] = [
-                $inv['investigation_id'],
-                $inv['case_title'],
-                $inv['description'],
-                $inv['status'],
-                $inv['date_started'],
-                $inv['date_closed'],
-            ];
+        $pdf->Cell(0, 10, 'Investigations Report', 0, 1, 'C');
+        $pdf->Ln(5);
+
+        // Table header
+        $pdf->SetFont('Arial', 'B', 10);
+        $header = ['ID', 'Case Title', 'Description', 'Status', 'Date Started', 'Date Closed'];
+        $widths = [15, 40, 50, 25, 30, 30];
+        foreach ($header as $i => $col) {
+            $pdf->Cell($widths[$i], 10, $col, 1);
         }
-        outputCSV('crms_investigations_report.csv', $header, $rows);
+        $pdf->Ln();
+
+        // Table data
+        $pdf->SetFont('Arial', '', 9);
+        foreach ($investigations_list as $inv) {
+            $pdf->Cell($widths[0], 8, $inv['investigation_id'], 1);
+            $pdf->Cell($widths[1], 8, substr($inv['case_title'], 0, 30), 1);
+            $pdf->Cell($widths[2], 8, substr($inv['description'], 0, 40), 1);
+            $pdf->Cell($widths[3], 8, $inv['status'], 1);
+            $pdf->Cell($widths[4], 8, $inv['date_started'], 1);
+            $pdf->Cell($widths[5], 8, $inv['date_closed'] ?? '', 1);
+            $pdf->Ln();
+        }
+
+        $pdf->Output('D', 'crms_investigations_report.pdf');
+        exit;
     }
 }
 
@@ -168,6 +224,10 @@ if (isset($_GET['export'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="icon" href="../ifm-logo.jpg" />
+      <style>
+    body { overflow: hidden; }
+    main { height: calc(100vh - 56px); overflow-y: auto; }
+  </style>
 </head>
 
 <body>
@@ -177,7 +237,7 @@ if (isset($_GET['export'])) {
         <div class="row" style="padding-top: 56px;">
             <?php include "./inc/sidebar.php"; ?>
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-3">
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-5">
                 <h2>System-wide Reports</h2>
 
                 <form method="get" class="row g-3 mb-4">
@@ -246,86 +306,89 @@ if (isset($_GET['export'])) {
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3>Criminal Cases</h3>
-                    <a href="?export=cases<?= $start_date && $end_date ? "&start_date=$start_date&end_date=$end_date" : "" ?>" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-download"></i> Export Cases CSV
+                    <a href="?export=cases<?= $start_date && $end_date ? "&start_date=$start_date&end_date=$end_date" : "" ?>"
+                        class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-download"></i> Export Cases PDF
                     </a>
                 </div>
                 <?php if (count($cases_list) > 0): ?>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Case ID</th>
-                                <th>Title</th>
-                                <th>Description</th>
-                                <th>Date Reported</th>
-                                <th>Suspect First Name</th>
-                                <th>Suspect Last Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($cases_list as $case): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($case['case_id']) ?></td>
-                                <td><?= htmlspecialchars($case['case_title']) ?></td>
-                                <td><?= htmlspecialchars($case['case_description']) ?></td>
-                                <td><?= htmlspecialchars($case['date_reported']) ?></td>
-                                <td><?= htmlspecialchars($case['suspect_fname']) ?></td>
-                                <td><?= htmlspecialchars($case['suspect_lname']) ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Case ID</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Date Reported</th>
+                                    <th>Suspect First Name</th>
+                                    <th>Suspect Last Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($cases_list as $case): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($case['case_id']) ?></td>
+                                        <td><?= htmlspecialchars($case['case_title']) ?></td>
+                                        <td><?= htmlspecialchars($case['case_description']) ?></td>
+                                        <td><?= htmlspecialchars($case['date_reported']) ?></td>
+                                        <td><?= htmlspecialchars($case['suspect_fname']) ?></td>
+                                        <td><?= htmlspecialchars($case['suspect_lname']) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php else: ?>
-                <p>No criminal cases found for selected period.</p>
+                    <p>No criminal cases found for selected period.</p>
                 <?php endif; ?>
 
                 <hr />
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3>Investigations</h3>
-                    <a href="?export=investigations<?= $start_date && $end_date ? "&start_date=$start_date&end_date=$end_date" : "" ?>" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-download"></i> Export Investigations CSV
+                    <a href="?export=investigations<?= $start_date && $end_date ? "&start_date=$start_date&end_date=$end_date" : "" ?>"
+                        class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-download"></i> Export Investigations PDF
                     </a>
                 </div>
                 <?php if (count($investigations_list) > 0): ?>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>ID</th>
-                                <th>Case Title</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>Date Started</th>
-                                <th>Date Closed</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($investigations_list as $inv): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($inv['investigation_id']) ?></td>
-                                <td><?= htmlspecialchars($inv['case_title']) ?></td>
-                                <td><?= htmlspecialchars($inv['description']) ?></td>
-                                <td><?= htmlspecialchars($inv['status']) ?></td>
-                                <td><?= htmlspecialchars($inv['date_started']) ?></td>
-                                <td><?= htmlspecialchars($inv['date_closed'] ?? '') ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Case Title</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Date Started</th>
+                                    <th>Date Closed</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($investigations_list as $inv): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($inv['investigation_id']) ?></td>
+                                        <td><?= htmlspecialchars($inv['case_title']) ?></td>
+                                        <td><?= htmlspecialchars($inv['description']) ?></td>
+                                        <td><?= htmlspecialchars($inv['status']) ?></td>
+                                        <td><?= htmlspecialchars($inv['date_started']) ?></td>
+                                        <td><?= htmlspecialchars($inv['date_closed'] ?? '') ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 <?php else: ?>
-                <p>No investigations found for selected period.</p>
+                    <p>No investigations found for selected period.</p>
                 <?php endif; ?>
 
                 <hr />
 
                 <div class="mb-4">
                     <h4>Export Summary Data</h4>
-                    <a href="?export=summary<?= $start_date && $end_date ? "&start_date=$start_date&end_date=$end_date" : "" ?>" class="btn btn-outline-success btn-sm">
-                        <i class="bi bi-download"></i> Export Summary CSV
+                    <a href="?export=summary<?= $start_date && $end_date ? "&start_date=$start_date&end_date=$end_date" : "" ?>"
+                        class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-download"></i> Export Summary PDF
                     </a>
                 </div>
 

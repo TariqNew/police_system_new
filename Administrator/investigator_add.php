@@ -9,7 +9,8 @@ require_once '../req/logger.php';
 require_once "../DB_connection.php";
 
 // Escape HTML output
-function esc($v) {
+function esc($v)
+{
   return htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8');
 }
 
@@ -111,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     logAction($conn, $user_id, $role, $action, $description);
 
     $_SESSION['success'] = "Investigator added successfully.";
-    header("Location: " . $_SERVER['PHP_SELF']);
+    header("Location: investigator.php");
     exit;
 
   } catch (Exception $e) {
@@ -130,6 +131,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="UTF-8" />
   <title>Add Investigator</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="icon" href="../logo.png" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 </head>
 
 <body class="bg-light">
@@ -171,7 +176,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Address</label>
-              <input type="text" name="address" class="form-control" value="<?= esc($old['address'] ?? '') ?>" required />
+              <input type="text" name="address" class="form-control" value="<?= esc($old['address'] ?? '') ?>"
+                required />
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Employee Number</label>
@@ -187,22 +193,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Email Address</label>
-              <input type="email" name="email_address" class="form-control" value="<?= esc($old['email_address'] ?? '') ?>" required />
+              <input type="email" name="email_address" class="form-control"
+                value="<?= esc($old['email_address'] ?? '') ?>" required />
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Gender</label><br />
               <div class="form-check form-check-inline">
-                <input type="radio" name="gender" value="Male" id="genderMale" class="form-check-input" <?= (isset($old['gender']) && $old['gender'] === 'Male') ? 'checked' : '' ?> required />
+                <input type="radio" name="gender" value="Male" id="genderMale" class="form-check-input"
+                  <?= (isset($old['gender']) && $old['gender'] === 'Male') ? 'checked' : '' ?> required />
                 <label for="genderMale" class="form-check-label">Male</label>
               </div>
               <div class="form-check form-check-inline">
-                <input type="radio" name="gender" value="Female" id="genderFemale" class="form-check-input" <?= (isset($old['gender']) && $old['gender'] === 'Female') ? 'checked' : '' ?> />
+                <input type="radio" name="gender" value="Female" id="genderFemale" class="form-check-input"
+                  <?= (isset($old['gender']) && $old['gender'] === 'Female') ? 'checked' : '' ?> />
                 <label for="genderFemale" class="form-check-label">Female</label>
               </div>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Date of Birth</label>
-              <input type="date" name="date_of_birth" class="form-control" value="<?= esc($old['date_of_birth'] ?? '') ?>" required />
+              <input type="date" name="date_of_birth" class="form-control"
+                value="<?= esc($old['date_of_birth'] ?? '') ?>" required />
             </div>
           </div>
 
@@ -224,4 +234,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     });
   </script>
 </body>
+
 </html>

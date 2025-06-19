@@ -59,7 +59,7 @@ if (
                 <div class="alert alert-success"><?= $_GET['success'] ?></div>
               <?php endif; ?>
 
-              <form method="post" action="req/suspect-edit.php">
+              <form method="post" action="suspect-edit.php">
                 <input type="hidden" name="suspect_id" value="<?= $suspect['suspect_id'] ?>">
                 <input type="hidden" name="case_id" value="<?= $case['case_id'] ?? '' ?>">
 

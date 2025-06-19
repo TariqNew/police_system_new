@@ -52,7 +52,7 @@ if (isset($_SESSION['officer_id']) && isset($_SESSION['role']) && $_SESSION['rol
                     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-3 scrollable-main">
                         <h2 class="mb-4">Search Suspects</h2>
 
-                        <a href="suspect_add.php" class="btn btn-dark mb-3">Add New Suspect</a>
+                        <a href="suspect.php" class="btn btn-dark mb-3">← Go Back</a>
 
                         <form action="suspect_search.php" method="get" class="mb-3">
                             <div class="input-group">

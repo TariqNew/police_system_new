@@ -37,7 +37,7 @@ if (
     $gender           = ($_POST['gender'] === 'Male' || $_POST['gender'] === 'Female') ? $_POST['gender'] : null;
 
     if (!$gender) {
-        header("Location: ../Administrator/police_officer.php?error=Invalid gender selected");
+        header("Location: ../Administrator/investigator_edit.php?error=Invalid gender selected");
         exit;
     }
 
