@@ -63,7 +63,7 @@ if ($setting != 0) {
 			      <div class="card-body">
 			        <h5 class="card-title">About Us</h5>
 			        <p class="card-text"><?=$setting['description']?></p>
-			        <p class="card-text"><small class="text-muted">CRIMINAL RECORD MANAGEMENT SYSTEM</small></p>
+			        <p class="card-text"><small class="text-muted" style="color: black">CRIMINAL RECORD MANAGEMENT SYSTEM</small></p>
 			      </div>
 			    </div>
 			  </div>

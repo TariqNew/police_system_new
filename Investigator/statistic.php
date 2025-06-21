@@ -1,15 +1,20 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include "../DB_connection.php";
 
-// Fetch investigations count by month and case title (last 6 months)
+// Fixed SQL: join investigations with criminal_cases to get case_title
 $caseTypesOverTime = $conn->query("
   SELECT 
-    DATE_FORMAT(date_started, '%Y-%m') AS month,
-    case_title,
+    DATE_FORMAT(i.date_started, '%Y-%m') AS month,
+    cc.case_title,
     COUNT(*) AS total
-  FROM investigations
-  WHERE date_started >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-  GROUP BY month, case_title
+  FROM investigations i
+  JOIN criminal_cases cc ON i.case_id = cc.case_id
+  WHERE i.date_started >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+  GROUP BY month, cc.case_title
   ORDER BY month
 ")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -47,7 +52,6 @@ foreach ($titles as $title) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -57,9 +61,6 @@ foreach ($titles as $title) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="icon" href="../logo.png">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -100,9 +101,9 @@ foreach ($titles as $title) {
                         beginAtZero: true,
                         ticks: {
                             stepSize: 1,
-                            precision: 0,  // whole numbers only
-                            callback: function (value) {
-                                return Number.isInteger(value) ? value : null;  // show only integers on y axis
+                            precision: 0,
+                            callback: function(value) {
+                                return Number.isInteger(value) ? value : null;
                             }
                         },
                         title: {
